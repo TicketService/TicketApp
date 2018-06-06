@@ -139,6 +139,7 @@
                         </h:form>
                     </p:dialog>
 
+
                     <!-- DELETE GROUP --> 
 
 
@@ -280,7 +281,7 @@
                 <!-- TICKET TABLE -->
 
                 <h:form id="ticket-table" style="margin-top: 5rem;">
-                    <b:dataTable rendered="#{ticketController.renderTicketTable}" value="#{ticketController.allTickets}" id="allTickets" style="width: 100%;" responsive="true"  var="tickets" excel="true" searching="true" csv="true" pdf="true" columnVisibility="true" copy="true" print="true">
+                    <b:dataTable rendered="#{ticketController.renderTicketTable}"  value="#{ticketController.allTickets}" id="allTickets" style="width: 100%;" responsive="true"  var="tickets" excel="true" searching="true" csv="true" pdf="true" columnVisibility="true" copy="true" print="true">
                         <f:facet name="header">
                             <tr>
                                 <th>#{ticketController.displayName()}</th>
@@ -337,7 +338,7 @@
                             <h:outputText id="display" /><h:outputText value="" />
 
 
-                            <p:commandButton style="margin: .5rem;" value="Update" actionListener="#{ticketController.updateTicket()}" action="#{ticketController.listUserTickets(ticketController.currentUser.id)}" oncomplete="PF('editTicketDialog').hide();" update=":ticket-table" />
+                            <p:commandButton style="margin: .5rem;" value="Update" actionListener="#{ticketController.updateTicket()}" action="#{ticketController.listTickets(ticketController.currentUser.id)}" oncomplete="PF('editTicketDialog').hide();" update=":ticket-table" />
 
                             <p:commandButton style="margin: .5rem; float: right" value="Close" oncomplete="PF('editTicketDialog').hide();" actionListener="#{ticketController.clear()}" />
                         </h:panelGrid>
