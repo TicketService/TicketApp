@@ -228,13 +228,14 @@ public class TicketController {
     }
 
     public void insertTicket() {
+        Connection conn = null; 
         try {
             HttpSession sesija = (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(true);
             fk_idoperators = (int) sesija.getAttribute("operatorId");
             comment = (comment == null) ? "" : comment;
             idgroup = (idgroup == null) ? 0 : idgroup;
 
-            Connection conn = DriverManager.getConnection(db.DB.connectionString, db.DB.user, db.DB.password);
+            conn = DriverManager.getConnection(db.DB.connectionString, db.DB.user, db.DB.password);
             String query = "insert into tickets values (null, CURRENT_TIMESTAMP, ?, ?,'" + comment + "', ?, ?, " + idgroup + ", ?)";
             PreparedStatement ps = conn.prepareStatement(query);
             ps.setInt(1, fk_idstatus);
@@ -250,12 +251,14 @@ public class TicketController {
             RequestContext.getCurrentInstance().execute("PF('questionsDialog').show()");
             idQuestion = getFirstQuestion(fk_idticket_type);
             convertIdToQuestion(idQuestion);
+            try { conn.close(); } catch (Exception e) { /* ignored */ }
         }
     }
 
     public void convertIdToQuestion(int idQ) {
+        Connection conn = null; 
         try {
-            Connection conn = DriverManager.getConnection(db.DB.connectionString, db.DB.user, db.DB.password);
+            conn = DriverManager.getConnection(db.DB.connectionString, db.DB.user, db.DB.password);
             Statement stmt = conn.createStatement();
             String query = "select * from questions where id_questions = " + idQ;
             ResultSet rs = stmt.executeQuery(query);
@@ -265,13 +268,16 @@ public class TicketController {
 
         } catch (SQLException ex) {
             Logger.getLogger(TicketController.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            try { conn.close(); } catch (Exception e) { /* ignored */ }
         }
 
     }
 
     public int getTicketId(int id) {
+        Connection conn = null;
         try {
-            Connection conn = DriverManager.getConnection(db.DB.connectionString, db.DB.user, db.DB.password);
+            conn = DriverManager.getConnection(db.DB.connectionString, db.DB.user, db.DB.password);
             Statement stmt = conn.createStatement();
             String query = "select * from tickets where fk_id_user=" + id + " order by id_ticket desc limit 1";
             ResultSet rs = stmt.executeQuery(query);
@@ -282,13 +288,16 @@ public class TicketController {
             return idTicket;
         } catch (SQLException ex) {
             Logger.getLogger(TicketController.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            try { conn.close(); } catch (Exception e) { /* ignored */ }
         }
         return 0;
     }
 
     public void getNextQuestion() {
+        Connection conn = null;
         try {
-            Connection conn = DriverManager.getConnection(db.DB.connectionString, db.DB.user, db.DB.password);
+            conn = DriverManager.getConnection(db.DB.connectionString, db.DB.user, db.DB.password);
             Statement stmt = conn.createStatement();
             String query = "select id_question2 from question_associations where answer = \"" + answer + "\" and id_question1 =" + idQuestion;
             ResultSet rs = stmt.executeQuery(query);
@@ -300,13 +309,16 @@ public class TicketController {
 
         } catch (SQLException ex) {
             Logger.getLogger(TicketController.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            try { conn.close(); } catch (Exception e) { /* ignored */ }
         }
     }
 
     public void insertAnswer() throws IOException {
+        Connection conn = null;
         int idTicket = getTicketId(fk_id_user);
         try {
-            Connection conn = DriverManager.getConnection(db.DB.connectionString, db.DB.user, db.DB.password);
+            conn = DriverManager.getConnection(db.DB.connectionString, db.DB.user, db.DB.password);
             String query = "insert into user_answers (user_answer, fk_id_user, fk_operators_id, fk_id_ticket, fk_id_question) values(?, ?, ?, ?, ?)";
             PreparedStatement ps = conn.prepareStatement(query);
             ps.setString(1, answer);
@@ -327,6 +339,8 @@ public class TicketController {
 
         } catch (SQLException ex) {
             Logger.getLogger(TicketController.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            try { conn.close(); } catch (Exception e) { /* ignored */ }
         }
     }
 
@@ -336,12 +350,25 @@ public class TicketController {
         renderTable();
     }
 
+    public void listTickets(int id) {
+        if (isOperator) {
+            HttpSession sesija = (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(true);
+            int operatorId = (Integer) sesija.getAttribute("operatorId");
+            renderOperatorTickets(operatorId);
+        } else {
+            listUserTickets(id);
+            isOperator = false;
+            renderTable();
+        }
+    }
+
     public void listUserTickets(int id) {
         if (isOperator) {
             isOperator = false;
         }
+        Connection conn = null;
         try {
-            Connection conn = DriverManager.getConnection(db.DB.connectionString, db.DB.user, db.DB.password);
+            conn = DriverManager.getConnection(db.DB.connectionString, db.DB.user, db.DB.password);
             Statement stmt = conn.createStatement();
             String query = "select * from tickets where fk_id_user=" + id;
 
@@ -364,6 +391,7 @@ public class TicketController {
             System.err.println("Error");
         } finally {
             clear();
+            try { conn.close(); } catch (Exception e) { /* ignored */ }
         }
     }
 
@@ -376,8 +404,9 @@ public class TicketController {
     }
 
     public void listOperatorTickets(int id) {
+        Connection conn = null;
         try {
-            Connection conn = DriverManager.getConnection(db.DB.connectionString, db.DB.user, db.DB.password);
+            conn = DriverManager.getConnection(db.DB.connectionString, db.DB.user, db.DB.password);
             Statement stmt = conn.createStatement();
             String query = "select * from tickets where fk_idoperators=" + id;
 
@@ -400,12 +429,14 @@ public class TicketController {
             System.err.println("Error");
         } finally {
             clear();
+            try { conn.close(); } catch (Exception e) { /* ignored */ }
         }
     }
 
     public String takeTicketTypeById(int id) {
+        Connection conn = null;
         try {
-            Connection conn = DriverManager.getConnection(db.DB.connectionString, db.DB.user, db.DB.password);
+            conn = DriverManager.getConnection(db.DB.connectionString, db.DB.user, db.DB.password);
             String query = "select * from ticket_type where idticket_type=" + id;
             Statement stmt = conn.createStatement();
             ResultSet rs = stmt.executeQuery(query);
@@ -416,13 +447,16 @@ public class TicketController {
             return ticketTypeName;
         } catch (SQLException ex) {
             System.err.println("Error");
+        } finally {
+            try { conn.close(); } catch (Exception e) { /* ignored */ }
         }
         return null;
     }
 
     public String takeStatusById(int id) {
+        Connection conn = null;
         try {
-            Connection conn = DriverManager.getConnection(db.DB.connectionString, db.DB.user, db.DB.password);
+            conn = DriverManager.getConnection(db.DB.connectionString, db.DB.user, db.DB.password);
             String query = "select * from status where idstatus=" + id;
             Statement stmt = conn.createStatement();
             ResultSet rs = stmt.executeQuery(query);
@@ -433,27 +467,31 @@ public class TicketController {
             return statusName;
         } catch (SQLException ex) {
             System.err.println("Error");
+        } finally {
+            try { conn.close(); } catch (Exception e) { /* ignored */ }
         }
         return null;
     }
 
-    public String takeGroupById(int id) {
-
+    public String takeGroupById(Integer id) {
+        Connection conn = null;
         try {
-            if (id == 0) {
+            if (id == 0 || id == null) {
                 return "No group";
             }
-            Connection conn = DriverManager.getConnection(db.DB.connectionString, db.DB.user, db.DB.password);
+            conn = DriverManager.getConnection(db.DB.connectionString, db.DB.user, db.DB.password);
             String query = "select * from ticket_service.group where idgroup=" + id;
             Statement stmt = conn.createStatement();
             ResultSet rs = stmt.executeQuery(query);
-
+            String grName = "";
             while (rs.next()) {
-                groupName = rs.getString("subject");
+                grName = rs.getString("subject");
             }
-            return groupName;
+            return grName;
         } catch (SQLException ex) {
             System.err.println("Error");
+        } finally {
+            try { conn.close(); } catch (Exception e) { /* ignored */ }
         }
         return null;
     }
@@ -488,9 +526,10 @@ public class TicketController {
     }
 
     public void updateTicket() {
+        Connection conn = null;
         try {
             String closed = (fk_idstatus == 3) ? "Ticket closed" : " ";
-            Connection conn = DriverManager.getConnection(db.DB.connectionString, db.DB.user, db.DB.password);
+            conn = DriverManager.getConnection(db.DB.connectionString, db.DB.user, db.DB.password);
             Statement stmt = conn.createStatement();
             String query = "update tickets set fk_idstatus='" + fk_idstatus + "', ";
             query += "idgroup=" + idgroup + ", ";
@@ -510,7 +549,7 @@ public class TicketController {
             Logger.getLogger(UserController.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
             clear();
-
+            try { conn.close(); } catch (Exception e) { /* ignored */ }
         }
     }
 
@@ -521,8 +560,9 @@ public class TicketController {
     }
 
     public User getUserByTicketId(int id) {
+        Connection conn = null;
         try {
-            Connection conn = DriverManager.getConnection(db.DB.connectionString, db.DB.user, db.DB.password);
+            conn = DriverManager.getConnection(db.DB.connectionString, db.DB.user, db.DB.password);
             Statement stmt = conn.createStatement();
             String query = "select * from users where id_user=" + id;
             ResultSet rs = stmt.executeQuery(query);
@@ -539,6 +579,8 @@ public class TicketController {
             return tempUser;
         } catch (SQLException ex) {
             Logger.getLogger(TicketController.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            try { conn.close(); } catch (Exception e) { /* ignored */ }
         }
         return null;
     }

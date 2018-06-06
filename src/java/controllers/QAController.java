@@ -149,8 +149,9 @@ public class QAController {
     }
 
     public Question getQuestionForId(int id) {
+        Connection conn = null;
         try {
-            Connection conn = DriverManager.getConnection(db.DB.connectionString, db.DB.user, db.DB.password);
+            conn = DriverManager.getConnection(db.DB.connectionString, db.DB.user, db.DB.password);
             Statement stmt = conn.createStatement();
             ResultSet rs = stmt.executeQuery("select * from questions where id_questions =" + id);
 
@@ -163,6 +164,8 @@ public class QAController {
 
         } catch (SQLException ex) {
             Logger.getLogger(QAController.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            try { conn.close(); } catch (Exception e) { /* ignored */ }
         }
         return null;
     }
@@ -173,8 +176,9 @@ public class QAController {
         } else if (question2 == null) {
             return "";
         }
+        Connection conn = null;
         try {
-            Connection conn = DriverManager.getConnection(db.DB.connectionString, db.DB.user, db.DB.password);
+            conn = DriverManager.getConnection(db.DB.connectionString, db.DB.user, db.DB.password);
             Statement stmt = conn.createStatement();
             ResultSet rs = stmt.executeQuery("select * from questions where id_questions =" + id);
 
@@ -185,13 +189,16 @@ public class QAController {
 
         } catch (SQLException ex) {
             Logger.getLogger(QAController.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            try { conn.close(); } catch (Exception e) { /* ignored */ }
         }
         return "";
     }
 
     public List<Question> takeAllQuestions() {
+        Connection conn = null;
         try {
-            Connection conn = DriverManager.getConnection(db.DB.connectionString, db.DB.user, db.DB.password);
+            conn = DriverManager.getConnection(db.DB.connectionString, db.DB.user, db.DB.password);
             Statement stmt = conn.createStatement();
             ResultSet rs = stmt.executeQuery("select * from questions");
             allQuestions = new ArrayList<>();
@@ -205,13 +212,16 @@ public class QAController {
             }
         } catch (SQLException ex) {
             Logger.getLogger(QAController.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            try { conn.close(); } catch (Exception e) { /* ignored */ }
         }
         return null;
     }
 
     public List<QuestionAssociation> takeAllQAForType() {
+        Connection conn = null;
         try {
-            Connection conn = DriverManager.getConnection(db.DB.connectionString, db.DB.user, db.DB.password);
+            conn = DriverManager.getConnection(db.DB.connectionString, db.DB.user, db.DB.password);
             Statement stmt = conn.createStatement();
             ResultSet rs = stmt.executeQuery("select * from question_associations where fk_id_ticket_type =" + idTicketType);
             allQA = new ArrayList<>();
@@ -238,6 +248,8 @@ public class QAController {
             return allQA;
         } catch (SQLException ex) {
             Logger.getLogger(CityController.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            try { conn.close(); } catch (Exception e) { /* ignored */ }
         }
         return null;
     }
@@ -250,8 +262,9 @@ public class QAController {
     }
 
     public Boolean firstQuestionExists() {
+        Connection conn = null;
         try {
-            Connection conn = DriverManager.getConnection(db.DB.connectionString, db.DB.user, db.DB.password);
+            conn = DriverManager.getConnection(db.DB.connectionString, db.DB.user, db.DB.password);
             Statement stmt = conn.createStatement();
             ResultSet rs = stmt.executeQuery("select * from first_questions where fk_idticket_type =" + idTicketType);
             if (rs.next()) {
@@ -261,6 +274,8 @@ public class QAController {
             }
         } catch (SQLException ex) {
             Logger.getLogger(QAController.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            try { conn.close(); } catch (Exception e) { /* ignored */ }
         }
         return null;
     }
@@ -281,8 +296,9 @@ public class QAController {
     }
 
     public void insertQuestionInDatabase() throws IOException {
+        Connection conn = null;
         try {
-            Connection conn = DriverManager.getConnection(db.DB.connectionString, db.DB.user, db.DB.password);
+            conn = DriverManager.getConnection(db.DB.connectionString, db.DB.user, db.DB.password);
             String query = "insert into questions (question) values(?)";
             PreparedStatement ps = conn.prepareStatement(query);
             ps.setString(1, subject);
@@ -296,12 +312,14 @@ public class QAController {
         } finally {
             clear();
             reload();
+            try { conn.close(); } catch (Exception e) { /* ignored */ }
         }
     }
 
     public Boolean question2Exists(int idQ, String answer1) {
+        Connection conn = null;
         try {
-            Connection conn = DriverManager.getConnection(db.DB.connectionString, db.DB.user, db.DB.password);
+            conn = DriverManager.getConnection(db.DB.connectionString, db.DB.user, db.DB.password);
             Statement stmt = conn.createStatement();
             String query = "select * from question_associations where id_question1 = " + idQ + " and answer = \"" + answer1 + "\"";
             ResultSet rs = stmt.executeQuery(query);
@@ -313,13 +331,16 @@ public class QAController {
             }
         } catch (SQLException ex) {
             Logger.getLogger(QAController.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            try { conn.close(); } catch (Exception e) { /* ignored */ }
         }
         return null;
     }
 
     public void insertQuestionInAssociations(int idQ) {
+        Connection conn = null;
         try {
-            Connection conn = DriverManager.getConnection(db.DB.connectionString, db.DB.user, db.DB.password);
+            conn = DriverManager.getConnection(db.DB.connectionString, db.DB.user, db.DB.password);
             String query = "insert into question_associations (id_question1, id_question2, answer, fk_id_ticket_type) values (?, ?, ?, ?)";
             PreparedStatement ps = conn.prepareStatement(query);
             if (!question2Exists(idQ, "Yes")) {
@@ -346,12 +367,15 @@ public class QAController {
 
         } catch (SQLException ex) {
             Logger.getLogger(QAController.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            try { conn.close(); } catch (Exception e) { /* ignored */ }
         }
     }
 
     public Boolean hasPrimaryKey(int id, String answer) {
+        Connection conn = null;
         try {
-            Connection conn = DriverManager.getConnection(db.DB.connectionString, db.DB.user, db.DB.password);
+            conn = DriverManager.getConnection(db.DB.connectionString, db.DB.user, db.DB.password);
             Statement stmt = conn.createStatement();
             String query = "select * from question_associations where id_question1 =" + id + " and answer = \"" + answer + "\"";
             ResultSet rs = stmt.executeQuery(query);
@@ -362,13 +386,16 @@ public class QAController {
             }
         } catch (SQLException ex) {
             Logger.getLogger(QAController.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            try { conn.close(); } catch (Exception e) { /* ignored */ }
         }
         return null;
     }
 
     public void insertQuestionInAssociations() {
+        Connection conn = null;
         try {
-            Connection conn = DriverManager.getConnection(db.DB.connectionString, db.DB.user, db.DB.password);
+            conn = DriverManager.getConnection(db.DB.connectionString, db.DB.user, db.DB.password);
             String query = "insert into question_associations (id_question1, id_question2, answer, fk_id_ticket_type) values (?, ?, ?, ?)";
             PreparedStatement ps = conn.prepareStatement(query);
             ps.setInt(1, idThirdQ);
@@ -400,12 +427,15 @@ public class QAController {
 
         } catch (SQLException ex) {
             Logger.getLogger(QAController.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            try { conn.close(); } catch (Exception e) { /* ignored */ }
         }
     }
 
     public void insertLinkedQuestion(int idQ1, String answer, int idQ2) throws IOException {
+        Connection conn = null;
         try {
-            Connection conn = DriverManager.getConnection(db.DB.connectionString, db.DB.user, db.DB.password);
+            conn = DriverManager.getConnection(db.DB.connectionString, db.DB.user, db.DB.password);
             Statement stmt = conn.createStatement();
             String query = "update question_associations set id_question2 =" + idQ2 + " where id_question1 = " + idQ1 + " and answer = \"" + answer + "\"";
             stmt.executeUpdate(query);
@@ -420,12 +450,14 @@ public class QAController {
             takeAllQAForType();
             idSecondQ = 0;
             reload();
+            try { conn.close(); } catch (Exception e) { /* ignored */ }
         }
     }
 
     public int getIdOfLastInsertedQuestion() {
+        Connection conn = null;
         try {
-            Connection conn = DriverManager.getConnection(db.DB.connectionString, db.DB.user, db.DB.password);
+            conn = DriverManager.getConnection(db.DB.connectionString, db.DB.user, db.DB.password);
             Statement stmt = conn.createStatement();
             String query = "select * from questions order by id_questions desc limit 1";
             ResultSet rs = stmt.executeQuery(query);
@@ -436,14 +468,17 @@ public class QAController {
             return idQ;
         } catch (SQLException ex) {
             Logger.getLogger(QAController.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            try { conn.close(); } catch (Exception e) { /* ignored */ }
         }
         return 0;
     }
 
     public String insertFirstQuestion() {
         insertQuestionInAssociations(idFirstQ);
+        Connection conn = null;
         try {
-            Connection conn = DriverManager.getConnection(db.DB.connectionString, db.DB.user, db.DB.password);
+            conn = DriverManager.getConnection(db.DB.connectionString, db.DB.user, db.DB.password);
             String query = "insert into first_questions (fk_id_questions, fk_idticket_type) values(?, ?)";
             PreparedStatement ps = conn.prepareStatement(query);
             ps.setInt(1, idFirstQ);
@@ -456,15 +491,16 @@ public class QAController {
         } catch (SQLException ex) {
             Logger.getLogger(QAController.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
-
             clear();
+            try { conn.close(); } catch (Exception e) { /* ignored */ }
         }
         return "admin?faces-redirect=true";
     }
 
     public void updateQuestion(Question first, Question second) throws IOException {
+        Connection conn = null;
         try {
-            Connection conn = DriverManager.getConnection(db.DB.connectionString, db.DB.user, db.DB.password);
+            conn = DriverManager.getConnection(db.DB.connectionString, db.DB.user, db.DB.password);
             Statement stmt = conn.createStatement();
 
             String query = "update questions set question='" + first.getSubject() + "' where id_questions= " + first.getIdQuestion();
@@ -481,6 +517,7 @@ public class QAController {
         } finally {
             takeAllQAForType();
             reload();
+            try { conn.close(); } catch (Exception e) { /* ignored */ }
         }
     }
 
@@ -505,8 +542,9 @@ public class QAController {
     }
 
     public void insertBetweenQuestion() throws IOException {
+        Connection conn = null;
         try {
-            Connection conn = DriverManager.getConnection(db.DB.connectionString, db.DB.user, db.DB.password);
+            conn = DriverManager.getConnection(db.DB.connectionString, db.DB.user, db.DB.password);
             Statement stmt = conn.createStatement();
             String query = "update question_associations set id_question2 = " + idThirdQ + " where id_question1 = " + question1.getIdQuestion() + " and answer = \"" + answer + "\"";
             stmt.executeUpdate(query);
@@ -522,6 +560,7 @@ public class QAController {
             takeAllQAForType();
             reload();
             visibleManageDialog = true;
+            try { conn.close(); } catch (Exception e) { /* ignored */ }
         }
 
     }
@@ -532,8 +571,9 @@ public class QAController {
     }
 
     public Boolean isLastQuestion(int idQ, int idTT) {
+        Connection conn = null;
         try {
-            Connection conn = DriverManager.getConnection(db.DB.connectionString, db.DB.user, db.DB.password);
+            conn = DriverManager.getConnection(db.DB.connectionString, db.DB.user, db.DB.password);
             Statement stmt = conn.createStatement();
             String query = "select * from question_associations where id_question1 = " + idQ + " and fk_id_ticket_type =" + idTT;
             ResultSet rs = stmt.executeQuery(query);
@@ -555,6 +595,8 @@ public class QAController {
             return last;
         } catch (SQLException ex) {
             Logger.getLogger(QAController.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            try { conn.close(); } catch (Exception e) { /* ignored */ }
         }
         return null;
     }
@@ -579,8 +621,9 @@ public class QAController {
     }
 
     public Boolean isFirstQuestion(int idQ) {
+        Connection conn = null;
         try {
-            Connection conn = DriverManager.getConnection(db.DB.connectionString, db.DB.user, db.DB.password);
+            conn = DriverManager.getConnection(db.DB.connectionString, db.DB.user, db.DB.password);
             Statement stmt = conn.createStatement();
             String query = "select * from first_questions where fk_id_questions = " + idQ;
             ResultSet rs = stmt.executeQuery(query);
@@ -592,13 +635,16 @@ public class QAController {
             return first;
         } catch (SQLException ex) {
             Logger.getLogger(QAController.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            try { conn.close(); } catch (Exception e) { /* ignored */ }
         }
         return null;
     }
 
     public void deleteQuestion() throws IOException {
+        Connection conn = null;
         try {
-            Connection conn = DriverManager.getConnection(db.DB.connectionString, db.DB.user, db.DB.password);
+            conn = DriverManager.getConnection(db.DB.connectionString, db.DB.user, db.DB.password);
             Statement stmt = conn.createStatement();
             stmt.executeUpdate("delete from question_associations where id_question1 = " + idFirstQ);
             if (isFirstQuestion(idFirstQ)) {
@@ -615,12 +661,14 @@ public class QAController {
         } finally {
             clear();
             reload();
+            try { conn.close(); } catch (Exception e) { /* ignored */ }
         }
     }
 
     public void deleteLastQuestion(int idQ1, String answer1, Integer idQ2) throws IOException {
+        Connection conn = null;
         try {
-            Connection conn = DriverManager.getConnection(db.DB.connectionString, db.DB.user, db.DB.password);
+            conn = DriverManager.getConnection(db.DB.connectionString, db.DB.user, db.DB.password);
             Statement stmt = conn.createStatement();
             stmt.executeUpdate("delete from question_associations where id_question1 = " + idQ2);
             stmt.executeUpdate("update question_associations set id_question2 = null where id_question1 = " + idQ1 + " and answer = \"" + answer1 + "\"");
@@ -633,6 +681,7 @@ public class QAController {
         } finally {
             takeAllQAForType();
             reload();
+            try { conn.close(); } catch (Exception e) { /* ignored */ }
         }
     }
 

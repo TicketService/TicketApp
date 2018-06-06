@@ -64,8 +64,9 @@ public class CityController {
     }
 
     public void takeAllCities() {
+        Connection conn = null;
         try {
-            Connection conn = DriverManager.getConnection(db.DB.connectionString, db.DB.user, db.DB.password);
+            conn = DriverManager.getConnection(db.DB.connectionString, db.DB.user, db.DB.password);
             Statement stmt = conn.createStatement();
             ResultSet rs = stmt.executeQuery("select * from cities");
             allCities = new ArrayList<>();
@@ -77,6 +78,8 @@ public class CityController {
             }
         } catch (SQLException ex) {
             Logger.getLogger(CityController.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            try { conn.close(); } catch (Exception e) { /* ignored */ }
         }
     }
 
@@ -97,8 +100,9 @@ public class CityController {
     }
 
     public String takeCityById(int id) {
+        Connection conn = null;
         try {
-            Connection conn = DriverManager.getConnection(db.DB.connectionString, db.DB.user, db.DB.password);
+            conn = DriverManager.getConnection(db.DB.connectionString, db.DB.user, db.DB.password);
             Statement stmt = conn.createStatement();
             ResultSet rs = stmt.executeQuery("select * from cities where id = " + id);
             oneCity = new ArrayList<>();
@@ -110,6 +114,8 @@ public class CityController {
             }
         } catch (SQLException ex) {
             Logger.getLogger(CityController.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            try { conn.close(); } catch (Exception e) { /* ignored */ }
         }
         return null;
     }

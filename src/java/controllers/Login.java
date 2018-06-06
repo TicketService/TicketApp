@@ -70,8 +70,9 @@ public class Login {
     }
 
     public String login() {
+        Connection conn = null;
         try {
-            Connection conn = DriverManager.getConnection(db.DB.connectionString, db.DB.user, db.DB.password);
+            conn = DriverManager.getConnection(db.DB.connectionString, db.DB.user, db.DB.password);
             Statement stm = conn.createStatement();
             ResultSet rs = stm.executeQuery("select * from operators where username = '" + username + "'");
             boolean validInput = false;
@@ -105,6 +106,8 @@ public class Login {
             }
         } catch (SQLException ex) {
             Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            try { conn.close(); } catch (Exception e) { /* ignored */ }
         }
         return null;
     }

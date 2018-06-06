@@ -83,8 +83,9 @@ public class RequestTypeController {
     }
 
     public String takeAllRequestType() {
+        Connection conn = null;
         try {
-            Connection conn = DriverManager.getConnection(db.DB.connectionString, db.DB.user, db.DB.password);
+            conn = DriverManager.getConnection(db.DB.connectionString, db.DB.user, db.DB.password);
             Statement stmt = conn.createStatement();
             ResultSet rs = stmt.executeQuery("select * from request_type");
             allRequestType = new ArrayList<>();
@@ -96,6 +97,8 @@ public class RequestTypeController {
             }
         } catch (SQLException ex) {
             Logger.getLogger(CityController.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            try { conn.close(); } catch (Exception e) { /* ignored */ }
         }
         return null;
     }
@@ -111,8 +114,9 @@ public class RequestTypeController {
     }
 
     public String takeRequestTypeById(int id) {
+        Connection conn = null;
         try {
-            Connection conn = DriverManager.getConnection(db.DB.connectionString, db.DB.user, db.DB.password);
+            conn = DriverManager.getConnection(db.DB.connectionString, db.DB.user, db.DB.password);
             Statement stmt = conn.createStatement();
             ResultSet rs = stmt.executeQuery("select * from request_type where idrequest_type=" + id);
             oneRequestType = new ArrayList<>();
@@ -124,6 +128,8 @@ public class RequestTypeController {
             }
         } catch (SQLException ex) {
             Logger.getLogger(CityController.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            try { conn.close(); } catch (Exception e) { /* ignored */ }
         }
         return null;
     }
@@ -133,8 +139,9 @@ public class RequestTypeController {
     }
 
     public String takeRequestNameById(int id) {
+        Connection conn = null;
         try {
-            Connection conn = DriverManager.getConnection(db.DB.connectionString, db.DB.user, db.DB.password);
+            conn = DriverManager.getConnection(db.DB.connectionString, db.DB.user, db.DB.password);
             String query = "select * from request_type where idrequest_type=" + id;
             Statement stmt = conn.createStatement();
             ResultSet rs = stmt.executeQuery(query);
@@ -145,14 +152,17 @@ public class RequestTypeController {
             return ticketRequestName;
         } catch (SQLException ex) {
             System.err.println("Error");
+        } finally {
+            try { conn.close(); } catch (Exception e) { /* ignored */ }
         }
         return null;
     }
 
     // INSERT STATUS
     public String insertRequestType() {
+        Connection conn = null;
         try {
-            Connection conn = DriverManager.getConnection(db.DB.connectionString, db.DB.user, db.DB.password);
+            conn = DriverManager.getConnection(db.DB.connectionString, db.DB.user, db.DB.password);
             String query = "insert into request_type (request_type) values (?)";
             PreparedStatement ps = conn.prepareStatement(query);
             ps.setString(1, request_type);
@@ -165,6 +175,7 @@ public class RequestTypeController {
             Logger.getLogger(UserController.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
             clear();
+            try { conn.close(); } catch (Exception e) { /* ignored */ }
         }
 
         return "admin?faces-redirect=true";
@@ -172,8 +183,9 @@ public class RequestTypeController {
 
     // DELETE TICKET TYPE
     public void deleteRequestType(int id) {
+        Connection conn = null;
         try {
-            Connection conn = DriverManager.getConnection(db.DB.connectionString, db.DB.user, db.DB.password);
+            conn = DriverManager.getConnection(db.DB.connectionString, db.DB.user, db.DB.password);
             Statement stmt = conn.createStatement();
             stmt.executeUpdate("delete from request_type where idrequest_type = " + id);
             int idx = 0;
@@ -189,13 +201,15 @@ public class RequestTypeController {
             Logger.getLogger(UserController.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
             clear();
+            try { conn.close(); } catch (Exception e) { /* ignored */ }
         }
     }
 
     // UPDATE TICKET TYPE
     public void updateRequestType() {
+        Connection conn = null;
         try {
-            Connection conn = DriverManager.getConnection(db.DB.connectionString, db.DB.user, db.DB.password);
+            conn = DriverManager.getConnection(db.DB.connectionString, db.DB.user, db.DB.password);
             Statement stmt = conn.createStatement();
             for (int i = 0; i < allRequestType.size(); i++) {
                 String currentReqType = allRequestType.get(i).getRequest_type();
@@ -212,7 +226,7 @@ public class RequestTypeController {
             Logger.getLogger(UserController.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
             clear();
-
+            try { conn.close(); } catch (Exception e) { /* ignored */ }
         }
     }
 

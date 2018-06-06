@@ -1,6 +1,7 @@
 package controllers;
 
 import beans.TicketType;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -14,7 +15,9 @@ import java.util.logging.Logger;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
+import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
+import javax.servlet.http.HttpServletRequest;
 
 @ManagedBean
 @SessionScoped
@@ -75,8 +78,9 @@ public class TicketTypeController {
     }
 
     public String takeAllTicketType() {
+        Connection conn = null;
         try {
-            Connection conn = DriverManager.getConnection(db.DB.connectionString, db.DB.user, db.DB.password);
+            conn = DriverManager.getConnection(db.DB.connectionString, db.DB.user, db.DB.password);
             Statement stmt = conn.createStatement();
             ResultSet rs = stmt.executeQuery("select * from ticket_type");
             allTicketType = new ArrayList<>();
@@ -88,6 +92,8 @@ public class TicketTypeController {
             }
         } catch (SQLException ex) {
             Logger.getLogger(CityController.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            try { conn.close(); } catch (Exception e) { /* ignored */ }
         }
         return null;
     }
@@ -103,8 +109,9 @@ public class TicketTypeController {
     }
 
     public String takeTicketTypeById(int id) {
+        Connection conn = null;
         try {
-            Connection conn = DriverManager.getConnection(db.DB.connectionString, db.DB.user, db.DB.password);
+            conn = DriverManager.getConnection(db.DB.connectionString, db.DB.user, db.DB.password);
             Statement stmt = conn.createStatement();
             ResultSet rs = stmt.executeQuery("select * from ticket_type where idticket_type=" + id);
             oneTicketType = new ArrayList<>();
@@ -116,13 +123,16 @@ public class TicketTypeController {
             }
         } catch (SQLException ex) {
             Logger.getLogger(CityController.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            try { conn.close(); } catch (Exception e) { /* ignored */ }
         }
         return null;
     }
 
     public String insertTicketType() {
+        Connection conn = null;
         try {
-            Connection conn = DriverManager.getConnection(db.DB.connectionString, db.DB.user, db.DB.password);
+            conn = DriverManager.getConnection(db.DB.connectionString, db.DB.user, db.DB.password);
             String query = "insert into ticket_type (ticket_type) values (?)";
             PreparedStatement ps = conn.prepareStatement(query);
             ps.setString(1, ticket_type);
@@ -135,15 +145,17 @@ public class TicketTypeController {
             Logger.getLogger(UserController.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
             clear();
+            try { conn.close(); } catch (Exception e) { /* ignored */ }           
         }
 
         return "admin?faces-redirect=true";
     }
 
     // DELETE TICKET TYPE
-    public void deleteTicketType(int id) {
+    public void deleteTicketType(int id) throws IOException {
+        Connection conn = null;
         try {
-            Connection conn = DriverManager.getConnection(db.DB.connectionString, db.DB.user, db.DB.password);
+            conn = DriverManager.getConnection(db.DB.connectionString, db.DB.user, db.DB.password);
             Statement stmt = conn.createStatement();
             stmt.executeUpdate("delete from ticket_type where idticket_type = " + id);
             int idx = 0;
@@ -159,13 +171,16 @@ public class TicketTypeController {
             Logger.getLogger(UserController.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
             clear();
+            reload();
+            try { conn.close(); } catch (Exception e) { /* ignored */ }
         }
     }
 
     // UPDATE TICKET TYPE
     public void updateTicketType() {
+        Connection conn = null;
         try {
-            Connection conn = DriverManager.getConnection(db.DB.connectionString, db.DB.user, db.DB.password);
+            conn = DriverManager.getConnection(db.DB.connectionString, db.DB.user, db.DB.password);
             Statement stmt = conn.createStatement();
             for (int i = 0; i < allTicketType.size(); i++) {
                 String currentTicketType = allTicketType.get(i).getTicket_type();
@@ -182,8 +197,14 @@ public class TicketTypeController {
             Logger.getLogger(UserController.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
             clear();
-
+            try { conn.close(); } catch (Exception e) { /* ignored */ }
         }
+    }
+
+    //    RELOADS PAGE
+    public void reload() throws IOException {
+        ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
+        ec.redirect(((HttpServletRequest) ec.getRequest()).getRequestURI());
     }
 
 }

@@ -146,8 +146,9 @@ public class UserController {
 
 //    RETURN CITYNAME FOR GIVEN CITYID
     public String takeCityNameById(Integer id) {
+        Connection conn = null;
         try {
-            Connection conn = DriverManager.getConnection(db.DB.connectionString, db.DB.user, db.DB.password);
+            conn = DriverManager.getConnection(db.DB.connectionString, db.DB.user, db.DB.password);
             String query = "select * from cities where idcity=" + id;
             Statement stmt = conn.createStatement();
             ResultSet rs = stmt.executeQuery(query);
@@ -158,6 +159,8 @@ public class UserController {
             return cityName;
         } catch (SQLException ex) {
             Logger.getLogger(CityController.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            try { conn.close(); } catch (Exception e) { /* ignored */ }
         }
         return null;
     }
@@ -176,8 +179,9 @@ public class UserController {
 
 //    INSERT USER IN DATABASE
     public String insertUser() {
+        Connection conn = null;
         try {
-            Connection conn = DriverManager.getConnection(db.DB.connectionString, db.DB.user, db.DB.password);
+            conn = DriverManager.getConnection(db.DB.connectionString, db.DB.user, db.DB.password);
             String query = "insert into users (first_name, last_name, phone_number, email, address, id_city) values (?, ?, ?, ?, ?, ?)";
             PreparedStatement ps = conn.prepareStatement(query);
             ps.setString(1, firstName);
@@ -195,6 +199,7 @@ public class UserController {
             Logger.getLogger(UserController.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
             clear();
+            try { conn.close(); } catch (Exception e) { /* ignored */ }
         }
         HttpSession sesija = (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(true);
         Integer type = (Integer) sesija.getAttribute("type");
@@ -208,8 +213,9 @@ public class UserController {
 
 //    DELETE USER FROM DATABASE
     public void deleteUser(int id) {
+        Connection conn = null;
         try {
-            Connection conn = DriverManager.getConnection(db.DB.connectionString, db.DB.user, db.DB.password);
+            conn = DriverManager.getConnection(db.DB.connectionString, db.DB.user, db.DB.password);
             Statement stmt = conn.createStatement();
             stmt.executeUpdate("delete from users where id_user = " + id);
             int idx = 0;
@@ -225,6 +231,7 @@ public class UserController {
             Logger.getLogger(UserController.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
             clear();
+            try { conn.close(); } catch (Exception e) { /* ignored */ }
         }
     }
 
@@ -235,8 +242,9 @@ public class UserController {
         String lastNameQuery = ("".equals(lastName) || " ".equals(lastName)) ? "'%'" : "'%" + lastName + "%'";
         String emailQuery = ("".equals(email) || " ".equals(email)) ? "'%'" : "'%" + email + "%'";
         String idCityQuery = Integer.toString(idCity);
+        Connection conn = null;
         try {
-            Connection conn = DriverManager.getConnection(db.DB.connectionString, db.DB.user, db.DB.password);
+            conn = DriverManager.getConnection(db.DB.connectionString, db.DB.user, db.DB.password);
             Statement stmt = conn.createStatement();
             String query = "select * from users where id_user like " + idUserQuery;
             query += " and first_name like " + firstNameQuery;
@@ -267,6 +275,7 @@ public class UserController {
             Logger.getLogger(UserController.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
             clear();
+            try { conn.close(); } catch (Exception e) { /* ignored */ }
         }
         return null;
     }
@@ -296,8 +305,9 @@ public class UserController {
 
 //    UPDATES USER IN DATABASE
     public void updateUser() {
+        Connection conn = null;
         try {
-            Connection conn = DriverManager.getConnection(db.DB.connectionString, db.DB.user, db.DB.password);
+            conn = DriverManager.getConnection(db.DB.connectionString, db.DB.user, db.DB.password);
             Statement stmt = conn.createStatement();
             String query = "update users set first_name='" + firstName + "', ";
             query += "last_name='" + lastName + "', ";
@@ -320,7 +330,7 @@ public class UserController {
             Logger.getLogger(UserController.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
             clear();
-
+            try { conn.close(); } catch (Exception e) { /* ignored */ }
         }
     }
 

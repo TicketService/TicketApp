@@ -74,8 +74,9 @@ public class StatusController {
     }
 
     public String takeAllStatus() {
+        Connection conn = null;
         try {
-            Connection conn = DriverManager.getConnection(db.DB.connectionString, db.DB.user, db.DB.password);
+            conn = DriverManager.getConnection(db.DB.connectionString, db.DB.user, db.DB.password);
             Statement stmt = conn.createStatement();
             ResultSet rs = stmt.executeQuery("select * from status");
             allStatus = new ArrayList<>();
@@ -87,6 +88,8 @@ public class StatusController {
             }
         } catch (SQLException ex) {
             Logger.getLogger(CityController.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            try { conn.close(); } catch (Exception e) { /* ignored */ }
         }
         return null;
     }
@@ -102,8 +105,9 @@ public class StatusController {
     }
 
     public String takeStatusById(int id) {
+        Connection conn = null;
         try {
-            Connection conn = DriverManager.getConnection(db.DB.connectionString, db.DB.user, db.DB.password);
+            conn = DriverManager.getConnection(db.DB.connectionString, db.DB.user, db.DB.password);
             Statement stmt = conn.createStatement();
             ResultSet rs = stmt.executeQuery("select * from status where idStatus=" + id);
             oneStatus = new ArrayList<>();
@@ -115,6 +119,8 @@ public class StatusController {
             }
         } catch (SQLException ex) {
             Logger.getLogger(CityController.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            try { conn.close(); } catch (Exception e) { /* ignored */ }
         }
         return null;
     }
@@ -124,8 +130,9 @@ public class StatusController {
     }
 
     public String takeStatusNameById(int id) {
+        Connection conn = null;
         try {
-            Connection conn = DriverManager.getConnection(db.DB.connectionString, db.DB.user, db.DB.password);
+            conn = DriverManager.getConnection(db.DB.connectionString, db.DB.user, db.DB.password);
             Statement stmt = conn.createStatement();
             ResultSet rs = stmt.executeQuery("select * from status where idStatus=" + id);
             while (rs.next()) {
@@ -134,14 +141,17 @@ public class StatusController {
             return status_type;
         } catch (SQLException ex) {
             Logger.getLogger(CityController.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            try { conn.close(); } catch (Exception e) { /* ignored */ }
         }
         return null;
     }
 
     // INSERT STATUS
     public String insertStatus() {
+        Connection conn = null;
         try {
-            Connection conn = DriverManager.getConnection(db.DB.connectionString, db.DB.user, db.DB.password);
+            conn = DriverManager.getConnection(db.DB.connectionString, db.DB.user, db.DB.password);
             String query = "insert into status (status_type) values (?)";
             PreparedStatement ps = conn.prepareStatement(query);
             ps.setString(1, status_type);
@@ -154,6 +164,7 @@ public class StatusController {
             Logger.getLogger(UserController.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
             clear();
+            try { conn.close(); } catch (Exception e) { /* ignored */ }
         }
 
         return "admin?faces-redirect=true";
@@ -161,8 +172,9 @@ public class StatusController {
 
     // DELETE TICKET TYPE
     public void deleteStatus(int id) {
+        Connection conn = null;
         try {
-            Connection conn = DriverManager.getConnection(db.DB.connectionString, db.DB.user, db.DB.password);
+            conn = DriverManager.getConnection(db.DB.connectionString, db.DB.user, db.DB.password);
             Statement stmt = conn.createStatement();
             stmt.executeUpdate("delete from status where idstatus = " + id);
             int idx = 0;
@@ -178,13 +190,15 @@ public class StatusController {
             Logger.getLogger(UserController.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
             clear();
+            try { conn.close(); } catch (Exception e) { /* ignored */ }
         }
     }
 
     // UPDATE TICKET TYPE
     public void updateStatus() {
+        Connection conn = null;
         try {
-            Connection conn = DriverManager.getConnection(db.DB.connectionString, db.DB.user, db.DB.password);
+            conn = DriverManager.getConnection(db.DB.connectionString, db.DB.user, db.DB.password);
             Statement stmt = conn.createStatement();
             for (int i = 0; i < allStatus.size(); i++) {
                 String currentStatusType = allStatus.get(i).getStatus_type();
@@ -201,7 +215,7 @@ public class StatusController {
             Logger.getLogger(UserController.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
             clear();
-
+            try { conn.close(); } catch (Exception e) { /* ignored */ }
         }
     }
 }

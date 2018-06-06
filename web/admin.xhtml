@@ -367,7 +367,7 @@
                             <h:outputText id="display" /><h:outputText value="" />
 
 
-                            <p:commandButton style="margin: .5rem;" value="Update" actionListener="#{ticketController.updateTicket()}" action="#{ticketController.listUserTickets(ticketController.currentUser.id)}" oncomplete="PF('editTicketDialog').hide();" update=":ticket-table" />
+                            <p:commandButton style="margin: .5rem;" value="Update" actionListener="#{ticketController.updateTicket()}" action="#{ticketController.listTickets(ticketController.currentUser.id)}" oncomplete="PF('editTicketDialog').hide();" update=":ticket-table" />
 
                             <p:commandButton style="margin: .5rem; float: right" value="Close" oncomplete="PF('editTicketDialog').hide();" actionListener="#{ticketController.clear()}" />
                         </h:panelGrid>

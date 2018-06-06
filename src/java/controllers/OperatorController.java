@@ -78,8 +78,9 @@ public class OperatorController {
     }
 
     public String takeAllOperators() {
+        Connection conn = null;
         try {
-            Connection conn = DriverManager.getConnection(db.DB.connectionString, db.DB.user, db.DB.password);
+            conn = DriverManager.getConnection(db.DB.connectionString, db.DB.user, db.DB.password);
             Statement stmt = conn.createStatement();
             ResultSet rs = stmt.executeQuery("select * from operators");
             allOperators = new ArrayList<>();
@@ -94,13 +95,16 @@ public class OperatorController {
             }
         } catch (SQLException ex) {
             Logger.getLogger(CityController.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            try { conn.close(); } catch (Exception e) { /* ignored */ }
         }
         return null;
     }
 
     public String getOperatorById(int id) {
+        Connection conn = null;
         try {
-            Connection conn = DriverManager.getConnection(db.DB.connectionString, db.DB.user, db.DB.password);
+            conn = DriverManager.getConnection(db.DB.connectionString, db.DB.user, db.DB.password);
             Statement stmt = conn.createStatement();
             String query = "select * from operators where id=" + id;
             ResultSet rs = stmt.executeQuery(query);
@@ -111,6 +115,8 @@ public class OperatorController {
 
         } catch (SQLException ex) {
             Logger.getLogger(CityController.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            try { conn.close(); } catch (Exception e) { /* ignored */ }
         }
         return null;
     }
@@ -122,8 +128,9 @@ public class OperatorController {
 
     // INSERT STATUS
     public String insertOperator() {
+        Connection conn = null;
         try {
-            Connection conn = DriverManager.getConnection(db.DB.connectionString, db.DB.user, db.DB.password);
+            conn = DriverManager.getConnection(db.DB.connectionString, db.DB.user, db.DB.password);
             String query = "insert into operators (username, password, type, img) values (?, ?, ?, ?)";
             PreparedStatement ps = conn.prepareStatement(query);
             ps.setString(1, username);
@@ -139,6 +146,7 @@ public class OperatorController {
             Logger.getLogger(UserController.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
             clear();
+            try { conn.close(); } catch (Exception e) { /* ignored */ }
         }
 
         return "admin?faces-redirect=true";
@@ -146,8 +154,9 @@ public class OperatorController {
 
     // DELETE TICKET TYPE
     public void deleteOperator(int id) {
+        Connection conn = null;
         try {
-            Connection conn = DriverManager.getConnection(db.DB.connectionString, db.DB.user, db.DB.password);
+            conn = DriverManager.getConnection(db.DB.connectionString, db.DB.user, db.DB.password);
             Statement stmt = conn.createStatement();
             stmt.executeUpdate("delete from operators where id = " + id);
             int idx = 0;
@@ -163,6 +172,7 @@ public class OperatorController {
             Logger.getLogger(UserController.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
             clear();
+            try { conn.close(); } catch (Exception e) { /* ignored */ }
         }
     }
 //
@@ -177,8 +187,9 @@ public class OperatorController {
 
     // UPDATE TICKET TYPE
     public void updateOperator() {
+        Connection conn = null;
         try {
-            Connection conn = DriverManager.getConnection(db.DB.connectionString, db.DB.user, db.DB.password);
+            conn = DriverManager.getConnection(db.DB.connectionString, db.DB.user, db.DB.password);
             Statement stmt = conn.createStatement();
             for (int i = 0; i < allOperators.size(); i++) {
                 String currentUsername = allOperators.get(i).getUsername();
@@ -198,6 +209,7 @@ public class OperatorController {
             Logger.getLogger(UserController.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
             clear();
+            try { conn.close(); } catch (Exception e) { /* ignored */ }
         }
     }
 }

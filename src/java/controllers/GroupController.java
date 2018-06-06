@@ -92,8 +92,9 @@ public class GroupController {
     }
 
     public String takeAllGroupSubjects() {
+        Connection conn = null;
         try {
-            Connection conn = DriverManager.getConnection(db.DB.connectionString, db.DB.user, db.DB.password);
+            conn = DriverManager.getConnection(db.DB.connectionString, db.DB.user, db.DB.password);
             Statement stmt = conn.createStatement();
             ResultSet rs = stmt.executeQuery("select * from ticket_service.group");
             allGroup = new ArrayList<>();
@@ -112,6 +113,8 @@ public class GroupController {
             }
         } catch (SQLException ex) {
             Logger.getLogger(GroupController.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            try { conn.close(); } catch (Exception e) { /* ignored */ }
         }
         return null;
     }
@@ -127,8 +130,9 @@ public class GroupController {
     }
 
     public String takeGroupById(int id) {
+        Connection conn = null;
         try {
-            Connection conn = DriverManager.getConnection(db.DB.connectionString, db.DB.user, db.DB.password);
+            conn = DriverManager.getConnection(db.DB.connectionString, db.DB.user, db.DB.password);
             Statement stmt = conn.createStatement();
             ResultSet rs = stmt.executeQuery("select * from group where idgroup=" + id);
             oneGroup = new ArrayList<>();
@@ -140,13 +144,16 @@ public class GroupController {
             }
         } catch (SQLException ex) {
             Logger.getLogger(GroupController.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            try { conn.close(); } catch (Exception e) { /* ignored */ }
         }
         return null;
     }
 
     public String takeGroupNameById(int id) {
+        Connection conn = null;
         try {
-            Connection conn = DriverManager.getConnection(db.DB.connectionString, db.DB.user, db.DB.password);
+            conn = DriverManager.getConnection(db.DB.connectionString, db.DB.user, db.DB.password);
             String query = "select * from ticket_service.group where idgroup=" + id;
             Statement stmt = conn.createStatement();
             ResultSet rs = stmt.executeQuery(query);
@@ -157,14 +164,17 @@ public class GroupController {
             return grName;
         } catch (SQLException ex) {
             System.err.println("Error");
+        } finally {
+            try { conn.close(); } catch (Exception e) { /* ignored */ }
         }
         return null;
     }
 
     // INSERT GROUP IN DB
     public String insertGroup() {
+        Connection conn = null;
         try {
-            Connection conn = DriverManager.getConnection(db.DB.connectionString, db.DB.user, db.DB.password);
+            conn = DriverManager.getConnection(db.DB.connectionString, db.DB.user, db.DB.password);
             String query = "insert into ticket_service.group (subject) values (?)";
             PreparedStatement ps = conn.prepareStatement(query);
             ps.setString(1, groupName);
@@ -175,6 +185,7 @@ public class GroupController {
             Logger.getLogger(UserController.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
             clear();
+            try { conn.close(); } catch (Exception e) { /* ignored */ }
         }
 
         HttpSession sesija = (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(true);
@@ -188,8 +199,9 @@ public class GroupController {
     }
 
     public void closeTicket(int idTicket) {
+        Connection conn = null;
         try {
-            Connection conn = DriverManager.getConnection(db.DB.connectionString, db.DB.user, db.DB.password);
+            conn = DriverManager.getConnection(db.DB.connectionString, db.DB.user, db.DB.password);
             Statement stmt = conn.createStatement();
             String query = "update tickets set idgroup = 1 where id_ticket = " + idTicket;
             stmt.executeUpdate(query);
@@ -197,13 +209,16 @@ public class GroupController {
             stmt.executeUpdate(query1);
         } catch (SQLException ex) {
             Logger.getLogger(GroupController.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            try { conn.close(); } catch (Exception e) { /* ignored */ }
         }
     }
 
     // Close ALL Tickets from Group
     public void closeTicketsFromGroup(int id) {
+        Connection conn = null;
         try {
-            Connection conn = DriverManager.getConnection(db.DB.connectionString, db.DB.user, db.DB.password);
+            conn = DriverManager.getConnection(db.DB.connectionString, db.DB.user, db.DB.password);
             Statement stmt = conn.createStatement();
             String query = "select * from tickets where idgroup =" + id;
             ResultSet rs = stmt.executeQuery(query);
@@ -213,14 +228,17 @@ public class GroupController {
             }
         } catch (SQLException ex) {
             Logger.getLogger(GroupController.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            try { conn.close(); } catch (Exception e) { /* ignored */ }
         }
     }
 
     // DELETE GROUP
     public void deleteGroup(int id) throws IOException {
         closeTicketsFromGroup(id);
+        Connection conn = null;
         try {
-            Connection conn = DriverManager.getConnection(db.DB.connectionString, db.DB.user, db.DB.password);
+            conn = DriverManager.getConnection(db.DB.connectionString, db.DB.user, db.DB.password);
             Statement stmt = conn.createStatement();
             stmt.executeUpdate("delete from ticket_service.group where idgroup = " + id);
             int idx = 0;
@@ -243,6 +261,7 @@ public class GroupController {
         } finally {
             reload();
             clear();
+            try { conn.close(); } catch (Exception e) { /* ignored */ }
         }
     }
     
