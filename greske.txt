@@ -1,0 +1,25 @@
+673 admin.xhtml header="Update Request Type" -> Update operator
+
+725 admin.xhtml header="Select Ticket Type"
+
+195 QAController "select * from question_associations where fk_id_ticket_type =" - nema fk_id_ticket_type u bazi
+
+276 QAController "insert into question_associations (id_question1, id_question2, answer, fk_id_ticket_type) values (?, ?, ?, ?)";
+
+
+Odradio sam admin deo za pitanja (bar vecinu stvari, moze jos da se sminka).
+
+Verovatno ima dosta bagova nisam sve testirao...u princpu najbolje be bilo da izbrisete sva pitanja asocijacije i prvo pitanje iz baze i pocnete od nule.
+
+Pitanja se kreiraju na add questions.
+
+Prvo pitanja za tip se ubacuje ako postoji mogucnost na insert firstquestions.
+
+Na manage questions se dodaje pitanje ako ima mesta ili edituju pitanja ako su obe asocijacije pune, ubacuje se pitanje izmedju 2 pitanja i brise se pitanje.
+
+Pitanje moze da se obrise samo ako je poslednje u nizu inace je opcija blokirana.
+
+Isto kad se ode na delete questions bice u padajucem meniju samo pitanja koja mogu da se obrisu. Tu mogu da se ubace i pitanja koja jos nisu dodeljena nijednoj asocijaciji. To nije problem, za sada nisu ubacena ta pitanja. 
+
+
+
